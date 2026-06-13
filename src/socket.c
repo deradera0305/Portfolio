@@ -60,3 +60,56 @@ int socket_accept(int server_fd){
     // 3.通信用のソケット番号を返す
     return client_fd;
 }
+
+int socket_client_init(const char* ip, int port){
+    // 1.ソケット作成（IPV4/TCP）
+    int client_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if(client_fd < 0){
+        return -1; // ソケット作成失敗
+    }
+
+    // 2.サーバーのアドレス設定
+    struct sockaddr_in server_addr;
+    memset(&server_addr, 0, sizeof(server_addr)); //構造体をゼロ初期化
+
+    server_addr.sin_family = AF_INET; // IPv4
+    server_addr.sin_port = htons(port); // ポート番号をネットワークバイトオーダーへ変換「
+
+    // 3.IPアドレスをバイナリ変換
+    if(inet_pton(AF_INET, ip, &server_addr.sin_addr) <= 0){
+        close(client_fd);
+        return -1; // IPアドレス変換失敗
+    }
+
+    // 4.connect()でサーバーに接続
+    if(connect(client_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0){
+        close(client_fd);
+        return -1; // 接続失敗
+    }
+
+    // 5.成功したら通信用ソケットを返す
+    return client_fd; 
+}
+
+int socket_recv(int fd, char* buf, size_t size){
+    // fd: 受信に使用するソケット
+    // buffer: 受信データを格納するバッファ
+
+    int recv_size = recv(fd, buf, size, 0); // 受信
+
+    if(recv_size < 0){
+        return -1; // 受信失敗
+    }
+    return recv_size; // 受信したバイト数
+}
+
+int socket_send(int fd, const char *buf, size_t size)
+{
+    int send_size = send(fd, buf, size, 0);  // 送信
+
+    if (send_size <= 0) {
+        return -1;  // 送信失敗
+    }
+
+    return send_size;     // 送信バイト数
+}
