@@ -91,7 +91,7 @@ int socket_client_init(const char* ip, int port){
     return client_fd; 
 }
 
-int socket_recv(int fd, char* buf, size_t size){
+int socket_recv(int fd, void* buf, size_t size){
     // fd: 受信に使用するソケット
     // buffer: 受信データを格納するバッファ
 
@@ -103,7 +103,7 @@ int socket_recv(int fd, char* buf, size_t size){
     return recv_size; // 受信したバイト数
 }
 
-int socket_send(int fd, const char *buf, size_t size)
+int socket_send(int fd, const void *buf, size_t size)
 {
     int send_size = send(fd, buf, size, 0);  // 送信
 
