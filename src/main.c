@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "socket.h"
+#include "can.h"
 
 int main(void)
 {
@@ -19,24 +20,20 @@ int main(void)
 
     printf("client connected!\n");
 
-    char buf[128];
+    // CANフレームの送信
+    CAN_Frame frame;
+    frame.id = 0x100;
+    frame.dlc = 3;
+    frame.data[0] = 10;
+    frame.data[1] = 20;
+    frame.data[2] = 30;
 
-    // --- 受信 ---
-    int size = socket_recv(client_fd, buf, sizeof(buf));
-    if (size < 0) {
-        printf("recv failed\n");
-        return -1;
-    }
-    buf[size] = '\0';
-    printf("recv: %s\n", buf);
-
-    // --- 送信 ---
-    char msg[] = "Hello Client!";
-    if (socket_send(client_fd, msg, strlen(msg)) < 0) {
+    if(socket_send(client_fd, &frame, sizeof(CAN_Frame)) < 0){
         printf("send failed\n");
         return -1;
     }
-    printf("send: %s\n", msg);
+
+    printf("send CAN frame\n");
 
     return 0;
 }
