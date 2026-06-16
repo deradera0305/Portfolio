@@ -2,7 +2,7 @@
 #include "can.h"
 
 //CANフレームを初期化
-void can_init(CAN_Frame *frame, init id, int dlc){
+void can_init(CAN_Frame *frame, int id, int dlc){
     frame->id = id; // CAN IDを設定
     frame->dlc = dlc; //データ長の設定
 
