@@ -35,5 +35,27 @@ int main(void)
 
     printf("send CAN frame\n");
 
+    // サーバーへ接続
+    int fd = socket_client_init("127.0.0.1", 5000);
+    if(fd < 0){
+        printf("connect failed\n");
+        return -1;
+    }
+
+    printf("connected to server\n");
+
+    // CANフレーム受信用の変数を用意
+    CAN_Frame recv_frame;
+
+    // CANフレームを受信
+    int recv_size = socket_recv(fd, &recv_frame, sizeof(CAN_Frame));
+    if(recv_size < 0){
+        printf("recv failed\n");
+        return -1;
+    }
+
+    // 受信したCANフレームを表示
+    can_print(&recv_frame);
+
     return 0;
 }
